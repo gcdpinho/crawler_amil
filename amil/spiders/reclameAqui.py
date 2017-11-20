@@ -8,7 +8,7 @@ class ReclameaquiSpider(scrapy.Spider):
     start_urls = ['https://www.reclameaqui.com.br/indices/lista_reclamacoes/?id=14205&page=1&size=10&status=ALL']
     feelings = []
     links = []
-    #count = 0
+    count = 0
 
     def __init__(self):
         self.driver = webdriver.PhantomJS()
@@ -33,8 +33,8 @@ class ReclameaquiSpider(scrapy.Spider):
                 callback = self.parse_detail
             )
 
-        if npag:
-            #self.count += 1
+        if npag and self.count < 0:
+            self.count += 1
             npag.click()
             yield scrapy.Request(
                 url = self.driver.current_url,
@@ -61,11 +61,11 @@ class ReclameaquiSpider(scrapy.Spider):
         
         #self.log('\n'+vote+'\n')
         yield{
-            'title': title,
-            'desc': desc,
+            'titulo': title,
+            'descricao': desc,
             'id': index,
             'local': local,
-            'date': date,
+            'data': date,
             'status': status,
-            'feeling': self.feelings[feelingIndex]
+            'sentimento': self.feelings[feelingIndex]
         }
