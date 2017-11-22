@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 import scrapy
 from selenium import webdriver
-
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 class ReclameaquiSpider(scrapy.Spider):
     name = 'reclameAqui'
-    start_urls = ['https://www.reclameaqui.com.br/indices/lista_reclamacoes/?id=14205&page=1&size=10&status=ALL']
+    start_urls = ['https://www.reclameaqui.com.br/indices/lista_reclamacoes/?id=14205&page=263&size=10&status=ALL']
     feelings = []
     links = []
     count = 0
@@ -17,11 +19,12 @@ class ReclameaquiSpider(scrapy.Spider):
     def parse(self, response):
         self.driver.get(response.url)
         
+        WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, 'pagination-next')))
         recs = self.driver.find_elements_by_class_name('complaint-item')
         npag = self.driver.find_element_by_class_name('pagination-next').find_element_by_tag_name('a')               
         for rec in recs:
             self.links.append(rec.find_element_by_tag_name('a').get_attribute('href'))
-            feeling = self.driver.find_element_by_class_name('complain-status-title').find_element_by_tag_name('img').get_attribute('src').split('/')[-1].split('.')[0]
+            feeling = self.driver.find_element_by_class_name('complain-status-title').find_element_by_tag_name('img').get_attribute('src').split('/')[-1].split('.')[0].replace('-', " ").replace('nao', 'não')
             self.feelings.append(feeling[0].upper() + feeling[1:])
         #self.driver.close()
         #self.print_list(self.votes)
@@ -40,7 +43,7 @@ class ReclameaquiSpider(scrapy.Spider):
                 url = self.driver.current_url,
                 callback = self.parse
             )
-        
+
    
     def print_list(self, lista):
         for element in lista:
@@ -49,6 +52,7 @@ class ReclameaquiSpider(scrapy.Spider):
     def parse_detail(self, response):
         self.ndriver.get(response.url)
 
+        WebDriverWait(self.ndriver, 10).until(EC.presence_of_element_located((By.TAG_NAME, 'h1')))
         title = self.ndriver.find_element_by_tag_name('h1').get_attribute('innerHTML')
         desc = self.ndriver.find_element_by_class_name('complain-body').find_element_by_tag_name('p').get_attribute('innerHTML').replace('<br>', ' ')
         local_date = self.ndriver.find_element_by_class_name('local-date').find_elements_by_tag_name('li')
@@ -63,7 +67,7 @@ class ReclameaquiSpider(scrapy.Spider):
         yield{
             'titulo': title,
             'descricao': desc,
-            'id': index,
+            'id_reclame_aqui': index,
             'local': local,
             'data': date,
             'status': status,

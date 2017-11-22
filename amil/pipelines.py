@@ -10,11 +10,20 @@ class AmilPipeline(object):
         
     def close_spider(self, spider):
         self.db.close()
-        self.connection.commit()
+        #self.connection.commit()
         self.connection.close()
+        print(spider.count)
 
     def process_item(self, item, spider):
-        
-        self.db.execute('INSERT INTO reclame_aqui (id, pesquisa, titulo, descricao, local, data, status, sentimento, id_reclame_aqui) VALUES (seq_reclame_aqui.NEXTVAL, \'Amil\', \''+item['titulo']+'\', \''+item['descricao']+'\', \''+item['local']+'\', to_date(\''+item['data']+'\', \'dd-mm-yyyy hh24:mi\'), \''+item['status']+'\', \''+item['sentimento']+'\', \''+item['id']+'\')')
+        query = """INSERT INTO reclame_aqui (id, pesquisa, titulo, descricao, local, data, status, sentimento, id_reclame_aqui) VALUES (seq_reclame_aqui.NEXTVAL, 'Amil', :titulo, :descricao, :local, to_date(:data, 'dd/mm/yyyy hh24:mi'), :status, :sentimento, :id_reclame_aqui)"""
+        self.db.execute(query, {
+            ':titulo': item['titulo'],
+            ':descricao': item['descricao'],
+            ':local': item['local'],
+            ':data': item['data'],
+            ':status': item['status'],
+            ':sentimento': item['sentimento'],
+            ':id_reclame_aqui': item['id_reclame_aqui']
+        })
 
         return item
