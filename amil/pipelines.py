@@ -10,9 +10,11 @@ class AmilPipeline(object):
         
     def close_spider(self, spider):
         self.db.close()
-        #self.connection.commit()
+        self.connection.commit()
         self.connection.close()
-        print(spider.count)
+        self.driver.close()
+        self.ndriver.close()
+        #print(spider.count)
 
     def process_item(self, item, spider):
         query = """INSERT INTO reclame_aqui (id, pesquisa, titulo, descricao, local, data, status, sentimento, id_reclame_aqui) VALUES (seq_reclame_aqui.NEXTVAL, 'Amil', :titulo, :descricao, :local, to_date(:data, 'dd/mm/yyyy hh24:mi'), :status, :sentimento, :id_reclame_aqui)"""

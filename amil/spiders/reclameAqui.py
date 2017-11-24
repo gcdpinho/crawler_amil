@@ -7,15 +7,15 @@ from selenium.webdriver.support import expected_conditions as EC
 
 class ReclameaquiSpider(scrapy.Spider):
     name = 'reclameAqui'
-    start_urls = ['https://www.reclameaqui.com.br/indices/lista_reclamacoes/?id=14205&page=263&size=10&status=ALL']
+    start_urls = ['https://www.reclameaqui.com.br/indices/lista_reclamacoes/?id=14205&page=1&size=10&status=ALL']
     feelings = []
     links = []
-    count = 0
-
+    count = 0 #263
+    
     def __init__(self):
         self.driver = webdriver.PhantomJS()
         self.ndriver = webdriver.PhantomJS()
- 
+    
     def parse(self, response):
         self.driver.get(response.url)
         
@@ -28,8 +28,7 @@ class ReclameaquiSpider(scrapy.Spider):
             self.feelings.append(feeling[0].upper() + feeling[1:])
         #self.driver.close()
         #self.print_list(self.votes)
-
-        data = []
+        
         for link in self.links:
             yield scrapy.Request(
                 url = link,
