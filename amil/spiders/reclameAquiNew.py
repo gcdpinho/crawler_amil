@@ -16,7 +16,7 @@ class ReclameAquiNewSpider(scrapy.Spider):
     def __init__(self):
         self.driver = webdriver.PhantomJS()
         self.ndriver = webdriver.PhantomJS()
-
+  
     def parse(self, response):
         self.driver.get(response.url)
 

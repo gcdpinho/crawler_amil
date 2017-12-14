@@ -19,18 +19,18 @@ NEWSPIDER_MODULE = 'amil.spiders'
 USER_AGENT = "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.93 Safari/537.36"
 
 # Obey robots.txt rules
-ROBOTSTXT_OBEY = True
+ROBOTSTXT_OBEY = False
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
-#CONCURRENT_REQUESTS = 32
+#CONCURRENT_REQUESTS = 8
 
 # Configure a delay for requests for the same website (default: 0)
 # See http://scrapy.readthedocs.org/en/latest/topics/settings.html#download-delay
 # See also autothrottle settings and docs
-#DOWNLOAD_DELAY = 3
+DOWNLOAD_DELAY = 0.5
 # The download delay setting will honor only one of:
 #CONCURRENT_REQUESTS_PER_DOMAIN = 16
-#CONCURRENT_REQUESTS_PER_IP = 16
+#CONCURRENT_REQUESTS_PER_IP = 1
 
 # Disable cookies (enabled by default)
 #COOKIES_ENABLED = False
@@ -46,15 +46,17 @@ ROBOTSTXT_OBEY = True
 
 # Enable or disable spider middlewares
 # See http://scrapy.readthedocs.org/en/latest/topics/spider-middleware.html
-#SPIDER_MIDDLEWARES = {
-#    'amil.middlewares.AmilSpiderMiddleware': 543,
-#}
+SPIDER_MIDDLEWARES = {
+    'scrapy_splash.SplashDeduplicateArgsMiddleware': 100,
+}
 
 # Enable or disable downloader middlewares
 # See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
-#DOWNLOADER_MIDDLEWARES = {
-#    'amil.middlewares.MyCustomDownloaderMiddleware': 543,
-#}
+DOWNLOADER_MIDDLEWARES = {
+    'scrapy_splash.SplashCookiesMiddleware': 723,
+    'scrapy_splash.SplashMiddleware': 725,
+    'scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware': 810,
+}
 
 # Enable or disable extensions
 # See http://scrapy.readthedocs.org/en/latest/topics/extensions.html
@@ -65,7 +67,7 @@ EXTENSIONS = {
 # Configure item pipelines
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    'amil.pipelines.AmilPipeline': 300,
+   'amil.pipelines.AmilPipeline': 300,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
@@ -88,3 +90,9 @@ ITEM_PIPELINES = {
 #HTTPCACHE_DIR = 'httpcache'
 #HTTPCACHE_IGNORE_HTTP_CODES = []
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
+
+CLOSESPIDER_ERRORCOUNT = 1
+
+SPLASH_URL = 'http://192.168.0.23:8050'
+
+DUPEFILTER_CLASS = 'scrapy_splash.SplashAwareDupeFilter'

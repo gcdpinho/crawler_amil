@@ -2,7 +2,6 @@
 import cx_Oracle
 from datetime import datetime
 
-
 class AmilPipeline(object):
     lastDate = None
 
@@ -18,9 +17,9 @@ class AmilPipeline(object):
         self.db.close()
         self.connection.commit()
         self.connection.close()
-        spider.driver.close()
-        spider.ndriver.close()
-        #print(spider.count)
+        #spider.driver.close()
+        #spider.ndriver.close()
+        print(spider.count)
 
     def process_item(self, item, spider):
         if self.lastDate != None:
